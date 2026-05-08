@@ -51,51 +51,19 @@ function init() {
   renderer.outputColorSpace = THREE.SRGBColorSpace;
 
   scene = new THREE.Scene();
-  // Лёгкий туман только вблизи, чтобы skybox не "затемнялся"
-  scene.fog = new THREE.Fog(0x9ca8b3, 60, 110);
 
   camera = new THREE.PerspectiveCamera(70, 1, 0.1, 500);
   camera.position.set(0, 1.65, 4);
 
   clock = new THREE.Clock();
 
-  // Skybox-сфера (заполнится текстурой при входе)
-  const sphereGeo = new THREE.SphereGeometry(200, 60, 40);
+  // Skybox-сфера — единственная геометрия в сцене
+  const sphereGeo = new THREE.SphereGeometry(100, 64, 48);
   sphereGeo.scale(-1, 1, 1); // вывернем нормали внутрь
-  const sphereMat = new THREE.MeshBasicMaterial({ color: 0xffffff, fog: false });
+  const sphereMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
   const sky = new THREE.Mesh(sphereGeo, sphereMat);
   sky.name = 'skybox';
-  sky.renderOrder = -1;
   scene.add(sky);
-
-  // Земля
-  const groundGeo = new THREE.PlaneGeometry(60, 60, 1, 1);
-  groundGeo.rotateX(-Math.PI / 2);
-  const groundMat = new THREE.MeshLambertMaterial({ color: 0x6b6253 });
-  const ground = new THREE.Mesh(groundGeo, groundMat);
-  ground.position.y = 0;
-  ground.name = 'ground';
-  scene.add(ground);
-
-  // Освещение
-  const ambient = new THREE.AmbientLight(0xb8c2cc, 0.85);
-  scene.add(ambient);
-  const sun = new THREE.DirectionalLight(0xffffff, 0.7);
-  sun.position.set(10, 20, 5);
-  scene.add(sun);
-
-  // Машина — низкополигональная "абстрактная"
-  car = buildCar();
-  car.position.set(0, 0, 0);
-  scene.add(car);
-
-  // Деревья по бокам — для атмосферы и ориентира движения
-  for (let i = 0; i < 14; i++) {
-    const t = buildTree();
-    const side = i % 2 === 0 ? -1 : 1;
-    t.position.set(side * (5 + Math.random() * 4), 0, -25 + i * 4 + Math.random() * 2);
-    scene.add(t);
-  }
 
   // Размер
   resize();
@@ -107,7 +75,7 @@ function init() {
   initialized = true;
 }
 
-// ─────────────── Машина (low-poly) ───────────────
+// ───────────── (НЕ ИСПОЛЬЗУЕТСЯ) Машина (low-poly) ─────────────
 function buildCar() {
   const g = new THREE.Group();
 
@@ -294,9 +262,9 @@ function animate() {
   const sx =  Math.cos(player.yaw);
   const sz = -Math.sin(player.yaw);
 
-  // Целевая скорость (максимум после разгона)
+  // Целевая скорость (максимум после разгона) — небыстрая ходьба
   const running = keys['ShiftLeft'] || keys['ShiftRight'];
-  const maxSpeed = running ? 7.0 : 3.5;
+  const maxSpeed = running ? 3.0 : 1.6;
   const targetVx = (fx * moveF + sx * moveS) * maxSpeed;
   const targetVz = (fz * moveF + sz * moveS) * maxSpeed;
 
@@ -317,14 +285,14 @@ function animate() {
   player.x += player.vx * dt;
   player.z += player.vz * dt;
 
-  // Ограничение радиуса
+  // Ограничение радиуса — не уходим далеко от центра сферы,
+  // иначе панорама искажается
   const r = Math.hypot(player.x, player.z);
-  if (r > 40) {
-    player.x *= 40 / r;
-    player.z *= 40 / r;
-    // «удар о борт» — гасим скорость
-    player.vx *= 0.4;
-    player.vz *= 0.4;
+  if (r > 8) {
+    player.x *= 8 / r;
+    player.z *= 8 / r;
+    player.vx *= 0.3;
+    player.vz *= 0.3;
   }
 
   // ──── Плавный поворот обзора ────
@@ -357,13 +325,13 @@ function animate() {
 // ─────────────── Публичное API: вход/выход ───────────────
 export function enterWorld(key, label) {
   init();
-  // Reset позиции игрока — стоит чуть позади и сбоку от машины
+  // Reset позиции — в центре сферы
   player.yaw = 0;
   player.pitch = 0;
   player.yawTarget = 0;
   player.pitchTarget = 0;
-  player.x = -2.5;
-  player.z = 5.5;
+  player.x = 0;
+  player.z = 0;
   player.vx = 0;
   player.vz = 0;
   player.bobT = 0;
@@ -373,33 +341,12 @@ export function enterWorld(key, label) {
   if (currentSkybox !== url) {
     new THREE.TextureLoader().load(url, (tex) => {
       tex.colorSpace = THREE.SRGBColorSpace;
-      tex.mapping = THREE.EquirectangularReflectionMapping;
       const sky = scene.getObjectByName('skybox');
       if (sky) {
         sky.material.map = tex;
         sky.material.color.setHex(0xffffff);
         sky.material.needsUpdate = true;
       }
-      // Земля — берём кусок панорамы для согласованности по цвету
-      const groundCanvas = document.createElement('canvas');
-      groundCanvas.width = 256; groundCanvas.height = 256;
-      const gctx = groundCanvas.getContext('2d');
-      const img = new Image();
-      img.crossOrigin = 'anonymous';
-      img.onload = () => {
-        // нижняя четверть панорамы — земля
-        gctx.drawImage(img, 0, img.height * 0.75, img.width, img.height * 0.25, 0, 0, 256, 256);
-        const gtex = new THREE.CanvasTexture(groundCanvas);
-        gtex.wrapS = gtex.wrapT = THREE.RepeatWrapping;
-        gtex.repeat.set(8, 8);
-        const ground = scene.getObjectByName('ground');
-        if (ground) {
-          ground.material.map = gtex;
-          ground.material.color.setHex(0xffffff);
-          ground.material.needsUpdate = true;
-        }
-      };
-      img.src = url;
     });
     currentSkybox = url;
   }
