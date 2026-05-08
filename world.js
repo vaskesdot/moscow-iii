@@ -22,7 +22,13 @@ const SKYBOXES = {
 
 // ─────────────── Глобальное состояние ───────────────
 let renderer, scene, camera, clock;
-let player = { yaw: 0, pitch: 0, x: 0, z: 4 };
+let player = {
+  yaw: 0, pitch: 0,            // текущие углы камеры
+  yawTarget: 0, pitchTarget: 0,// целевые (инпут пишет сюда)
+  x: 0, z: 4,                  // позиция
+  vx: 0, vz: 0,                // текущая скорость
+  bobT: 0,                     // фаза покачивания
+};
 let car;
 let keys = {};
 let touch = { active: false, lastX: 0, lastY: 0 };
@@ -209,9 +215,9 @@ function bindInputs() {
   });
   document.addEventListener('mousemove', (e) => {
     if (!isActive() || !pointerLockActive) return;
-    player.yaw   -= e.movementX * 0.0025;
-    player.pitch -= e.movementY * 0.0025;
-    player.pitch = Math.max(-1.2, Math.min(1.2, player.pitch));
+    player.yawTarget   -= e.movementX * 0.0022;
+    player.pitchTarget -= e.movementY * 0.0022;
+    player.pitchTarget = Math.max(-1.2, Math.min(1.2, player.pitchTarget));
   });
 
   // Тач — обзор свайпом
@@ -229,9 +235,9 @@ function bindInputs() {
     const dy = t.clientY - touch.lastY;
     touch.lastX = t.clientX;
     touch.lastY = t.clientY;
-    player.yaw   -= dx * 0.005;
-    player.pitch -= dy * 0.005;
-    player.pitch = Math.max(-1.2, Math.min(1.2, player.pitch));
+    player.yawTarget   -= dx * 0.0045;
+    player.pitchTarget -= dy * 0.0045;
+    player.pitchTarget = Math.max(-1.2, Math.min(1.2, player.pitchTarget));
   }, { passive: true });
   canvas.addEventListener('touchend', () => { touch.active = false; });
 
@@ -271,36 +277,76 @@ function animate() {
   }
   const dt = Math.min(clock.getDelta(), 0.05);
 
-  // Скорость
-  const running = keys['ShiftLeft'] || keys['ShiftRight'];
-  const speed = (running ? 6.5 : 3.2) * dt;
-
-  // Направление: вперёд от camera yaw
-  const fx = -Math.sin(player.yaw);
-  const fz = -Math.cos(player.yaw);
-  const sx =  Math.cos(player.yaw); // strafe right
-  const sz = -Math.sin(player.yaw);
-
+  // ──── Инпут → целевой вектор движения ────
   let moveF = 0, moveS = 0;
   if (keys['KeyW'] || keys['ArrowUp']    || mobileMove.fwd)   moveF += 1;
   if (keys['KeyS'] || keys['ArrowDown']  || mobileMove.bwd)   moveF -= 1;
   if (keys['KeyD'] || keys['ArrowRight'] || mobileMove.right) moveS += 1;
   if (keys['KeyA'] || keys['ArrowLeft']  || mobileMove.left)  moveS -= 1;
 
-  player.x += (fx * moveF + sx * moveS) * speed;
-  player.z += (fz * moveF + sz * moveS) * speed;
+  // Нормализация диагонали
+  const len = Math.hypot(moveF, moveS);
+  if (len > 1) { moveF /= len; moveS /= len; }
 
-  // Ограничим радиус, чтобы не уйти за skybox
+  // Направление от текущего угла камеры
+  const fx = -Math.sin(player.yaw);
+  const fz = -Math.cos(player.yaw);
+  const sx =  Math.cos(player.yaw);
+  const sz = -Math.sin(player.yaw);
+
+  // Целевая скорость (максимум после разгона)
+  const running = keys['ShiftLeft'] || keys['ShiftRight'];
+  const maxSpeed = running ? 7.0 : 3.5;
+  const targetVx = (fx * moveF + sx * moveS) * maxSpeed;
+  const targetVz = (fz * moveF + sz * moveS) * maxSpeed;
+
+  // ──── Инерция: плавный разгон и торможение ────
+  // "время разгона" ≈ 0.6 сек, торможения ≈ 0.8 сек
+  const accelerating = (moveF !== 0 || moveS !== 0);
+  const tau = accelerating ? 0.55 : 0.85;
+  // экспоненциальный lerp: коэфф = 1 - exp(-dt/tau)
+  const k = 1 - Math.exp(-dt / tau);
+  player.vx += (targetVx - player.vx) * k;
+  player.vz += (targetVz - player.vz) * k;
+
+  // Обнуляем микродребезг
+  if (Math.abs(player.vx) < 0.01) player.vx = 0;
+  if (Math.abs(player.vz) < 0.01) player.vz = 0;
+
+  // Применение скорости
+  player.x += player.vx * dt;
+  player.z += player.vz * dt;
+
+  // Ограничение радиуса
   const r = Math.hypot(player.x, player.z);
   if (r > 40) {
     player.x *= 40 / r;
     player.z *= 40 / r;
+    // «удар о борт» — гасим скорость
+    player.vx *= 0.4;
+    player.vz *= 0.4;
   }
 
-  // Камера
-  camera.position.set(player.x, 1.65, player.z);
+  // ──── Плавный поворот обзора ────
+  const lookK = 1 - Math.exp(-dt / 0.08); // время сглаживания ≈ 80 мс
+  player.yaw   += (player.yawTarget   - player.yaw)   * lookK;
+  player.pitch += (player.pitchTarget - player.pitch) * lookK;
+
+  // ──── Head-bob: покачивание при движении ────
+  const speedNow = Math.hypot(player.vx, player.vz);
+  const speedRatio = Math.min(speedNow / maxSpeed, 1);
+  player.bobT += dt * (running ? 11 : 7) * speedRatio;
+  const bobY = Math.sin(player.bobT) * 0.045 * speedRatio;
+  const bobX = Math.cos(player.bobT * 0.5) * 0.025 * speedRatio;
+
+  // ──── Камера ────
+  const eyeY = 1.65 + bobY;
+  // Лёгкий сдвиг влево/вправо относительно направления взгляда
+  const sideX =  Math.cos(player.yaw) * bobX;
+  const sideZ = -Math.sin(player.yaw) * bobX;
+  camera.position.set(player.x + sideX, eyeY, player.z + sideZ);
   const lookX = player.x + Math.sin(player.yaw) * Math.cos(player.pitch) * -1;
-  const lookY = 1.65 + Math.sin(player.pitch);
+  const lookY = eyeY + Math.sin(player.pitch);
   const lookZ = player.z + Math.cos(player.yaw) * Math.cos(player.pitch) * -1;
   camera.lookAt(lookX, lookY, lookZ);
 
@@ -314,8 +360,13 @@ export function enterWorld(key, label) {
   // Reset позиции игрока — стоит чуть позади и сбоку от машины
   player.yaw = 0;
   player.pitch = 0;
+  player.yawTarget = 0;
+  player.pitchTarget = 0;
   player.x = -2.5;
   player.z = 5.5;
+  player.vx = 0;
+  player.vz = 0;
+  player.bobT = 0;
 
   // Skybox
   const url = SKYBOXES[key] || SKYBOXES.home;
@@ -376,4 +427,10 @@ export function exitWorld() {
 }
 
 // Экспорт в глобал, чтобы script.js мог вызвать
-window.MoscowWorld = { enterWorld, exitWorld };
+window.MoscowWorld = {
+  enterWorld,
+  exitWorld,
+  get _dbg() {
+    return { x: player.x, z: player.z, vx: player.vx, vz: player.vz, v: Math.hypot(player.vx, player.vz) };
+  }
+};
