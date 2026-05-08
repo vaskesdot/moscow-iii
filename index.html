@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="theme-color" content="#000000" />
+    <title>MOSCOW III</title>
+
+    <!-- Pricedown — оригинальный шрифт GTA. Загрузим самохост-аналог через @font-face -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@500;700&family=Roboto+Condensed:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <!-- ─────────── ЗАГРУЗОЧНЫЙ ЭКРАН ─────────── -->
+    <section id="boot-screen" class="screen active">
+      <div class="boot-bar"><div class="boot-bar-fill" id="boot-bar-fill"></div></div>
+      <div class="boot-text">RAGE GAMES PRESENTS</div>
+    </section>
+
+    <!-- ─────────── R★ ЗАСТАВКА ─────────── -->
+    <section id="rage-screen" class="screen">
+      <div class="rage-logo">
+        <div class="rage-star">★</div>
+        <div class="rage-text">DIGITAL</div>
+      </div>
+    </section>
+
+    <!-- ─────────── ОСНОВНОЙ ЭКРАН (АРТ + НАЖМИТЕ START) ─────────── -->
+    <section id="title-screen" class="screen">
+      <div class="cover-art" id="cover-art"></div>
+      <div class="title-overlay">
+        <div class="logo-block">
+          <div class="logo-rage">RAGE GAMES</div>
+          <h1 class="logo-main">
+            <span class="logo-word">MOSCOW</span>
+            <span class="logo-numeral">III</span>
+          </h1>
+          <div class="logo-tagline">МОСКВА — ГОРОД ВОЗМОЖНОСТЕЙ</div>
+        </div>
+        <div class="press-start" id="press-start">
+          <span class="press-key">НАЖМИТЕ ПРОБЕЛ ИЛИ КОСНИТЕСЬ ЭКРАНА</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────── ГЛАВНОЕ МЕНЮ ─────────── -->
+    <section id="main-menu" class="screen menu-screen">
+      <div class="menu-side-art"></div>
+      <div class="menu-content">
+        <div class="menu-header">
+          <div class="menu-breadcrumb">MOSCOW III</div>
+          <div class="menu-title">ГЛАВНОЕ МЕНЮ</div>
+        </div>
+
+        <ul class="menu-list" id="menu-main">
+          <li class="menu-item" data-target="new-game">
+            <span class="item-arrow">▸</span><span class="item-label">НОВАЯ ИГРА</span>
+          </li>
+          <li class="menu-item" data-target="continue">
+            <span class="item-arrow">▸</span><span class="item-label">ЗАГРУЗИТЬ ИГРУ</span>
+          </li>
+          <li class="menu-item" data-target="multiplayer">
+            <span class="item-arrow">▸</span><span class="item-label">МУЛЬТИПЛЕЕР</span>
+          </li>
+          <li class="menu-item" data-target="options">
+            <span class="item-arrow">▸</span><span class="item-label">НАСТРОЙКИ</span>
+          </li>
+          <li class="menu-item" data-target="stats">
+            <span class="item-arrow">▸</span><span class="item-label">СТАТИСТИКА</span>
+          </li>
+          <li class="menu-item" data-target="brief">
+            <span class="item-arrow">▸</span><span class="item-label">СВОДКА</span>
+          </li>
+          <li class="menu-item" data-target="map">
+            <span class="item-arrow">▸</span><span class="item-label">КАРТА</span>
+          </li>
+          <li class="menu-item" data-target="credits">
+            <span class="item-arrow">▸</span><span class="item-label">ТИТРЫ</span>
+          </li>
+          <li class="menu-item" data-target="quit">
+            <span class="item-arrow">▸</span><span class="item-label">ВЫХОД</span>
+          </li>
+        </ul>
+
+        <div class="menu-footer">
+          <span class="hint"><kbd>↑↓</kbd> ВЫБОР</span>
+          <span class="hint"><kbd>Enter</kbd> ОК</span>
+          <span class="hint"><kbd>Esc</kbd> НАЗАД</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────── ПОДМЕНЮ: НОВАЯ ИГРА ─────────── -->
+    <section id="new-game-menu" class="screen menu-screen">
+      <div class="menu-side-art"></div>
+      <div class="menu-content">
+        <div class="menu-header">
+          <div class="menu-breadcrumb">ГЛАВНОЕ МЕНЮ ▸ <span class="bc-current">НОВАЯ ИГРА</span></div>
+          <div class="menu-title">НОВАЯ ИГРА</div>
+        </div>
+
+        <ul class="menu-list">
+          <li class="menu-item" data-action="start-1">
+            <span class="item-arrow">▸</span>
+            <span class="item-label">КАМПАНИЯ — БРАТ ВЕРНУЛСЯ</span>
+            <span class="item-meta">8 миссий</span>
+          </li>
+          <li class="menu-item" data-action="start-2">
+            <span class="item-arrow">▸</span>
+            <span class="item-label">КАМПАНИЯ — ХОЛОДНАЯ ЗИМА</span>
+            <span class="item-meta">12 миссий</span>
+          </li>
+          <li class="menu-item" data-action="start-3">
+            <span class="item-arrow">▸</span>
+            <span class="item-label">СВОБОДНАЯ ЕЗДА</span>
+            <span class="item-meta">без миссий</span>
+          </li>
+          <li class="menu-item" data-action="start-4">
+            <span class="item-arrow">▸</span>
+            <span class="item-label">ТАКСИСТ</span>
+            <span class="item-meta">режим заработка</span>
+          </li>
+          <li class="menu-item back" data-action="back">
+            <span class="item-arrow">◂</span><span class="item-label">НАЗАД</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ─────────── ПОДМЕНЮ: ЗАГРУЗИТЬ ─────────── -->
+    <section id="continue-menu" class="screen menu-screen">
+      <div class="menu-side-art"></div>
+      <div class="menu-content">
+        <div class="menu-header">
+          <div class="menu-breadcrumb">ГЛАВНОЕ МЕНЮ ▸ <span class="bc-current">ЗАГРУЗИТЬ ИГРУ</span></div>
+          <div class="menu-title">СОХРАНЕНИЯ</div>
+        </div>
+
+        <ul class="menu-list save-list">
+          <li class="menu-item save-slot" data-action="load-1">
+            <div class="slot-line">
+              <span class="slot-num">01</span>
+              <span class="slot-name">ВАСЯ — Тверская, ночь</span>
+              <span class="slot-time">2 часа 14 мин</span>
+            </div>
+            <div class="slot-line slot-line-sub">
+              <span class="slot-mission">Миссия 4 — «Чёрный воронок»</span>
+              <span class="slot-money">$ 14 200</span>
+            </div>
+          </li>
+          <li class="menu-item save-slot" data-action="load-2">
+            <div class="slot-line">
+              <span class="slot-num">02</span>
+              <span class="slot-name">ВАСЯ — Москва-Сити</span>
+              <span class="slot-time">5 часов 40 мин</span>
+            </div>
+            <div class="slot-line slot-line-sub">
+              <span class="slot-mission">Миссия 7 — «Башни молчат»</span>
+              <span class="slot-money">$ 88 600</span>
+            </div>
+          </li>
+          <li class="menu-item save-slot empty" data-action="load-3">
+            <div class="slot-line">
+              <span class="slot-num">03</span>
+              <span class="slot-name slot-empty-text">— ПУСТО —</span>
+            </div>
+          </li>
+          <li class="menu-item back" data-action="back">
+            <span class="item-arrow">◂</span><span class="item-label">НАЗАД</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ─────────── ПОДМЕНЮ: НАСТРОЙКИ ─────────── -->
+    <section id="options-menu" class="screen menu-screen">
+      <div class="menu-side-art"></div>
+      <div class="menu-content">
+        <div class="menu-header">
+          <div class="menu-breadcrumb">ГЛАВНОЕ МЕНЮ ▸ <span class="bc-current">НАСТРОЙКИ</span></div>
+          <div class="menu-title">НАСТРОЙКИ</div>
+        </div>
+
+        <ul class="menu-list options-list">
+          <li class="menu-item option-row">
+            <span class="item-label">ГРОМКОСТЬ МУЗЫКИ</span>
+            <div class="option-bar" data-key="music"><span class="bar-fill" style="width: 70%"></span></div>
+            <span class="option-value" data-bind="music">70</span>
+          </li>
+          <li class="menu-item option-row">
+            <span class="item-label">ГРОМКОСТЬ ЗВУКОВ</span>
+            <div class="option-bar" data-key="sfx"><span class="bar-fill" style="width: 85%"></span></div>
+            <span class="option-value" data-bind="sfx">85</span>
+          </li>
+          <li class="menu-item option-row">
+            <span class="item-label">ЯРКОСТЬ</span>
+            <div class="option-bar" data-key="brightness"><span class="bar-fill" style="width: 55%"></span></div>
+            <span class="option-value" data-bind="brightness">55</span>
+          </li>
+          <li class="menu-item option-row option-toggle">
+            <span class="item-label">СУБТИТРЫ</span>
+            <span class="option-toggle-value" data-key="subs" data-on="true">ВКЛ</span>
+          </li>
+          <li class="menu-item option-row option-toggle">
+            <span class="item-label">ИНВЕРСИЯ ОСИ Y</span>
+            <span class="option-toggle-value" data-key="invy" data-on="false">ВЫКЛ</span>
+          </li>
+          <li class="menu-item option-row option-toggle">
+            <span class="item-label">ВИБРАЦИЯ ТЕЛЕФОНА</span>
+            <span class="option-toggle-value" data-key="vibrate" data-on="true">ВКЛ</span>
+          </li>
+          <li class="menu-item back" data-action="back">
+            <span class="item-arrow">◂</span><span class="item-label">НАЗАД</span>
+          </li>
+        </ul>
+
+        <div class="menu-footer">
+          <span class="hint"><kbd>← →</kbd> ИЗМЕНИТЬ</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────── ПОДМЕНЮ: СТАТИСТИКА ─────────── -->
+    <section id="stats-menu" class="screen menu-screen">
+      <div class="menu-side-art"></div>
+      <div class="menu-content">
+        <div class="menu-header">
+          <div class="menu-breadcrumb">ГЛАВНОЕ МЕНЮ ▸ <span class="bc-current">СТАТИСТИКА</span></div>
+          <div class="menu-title">СТАТИСТИКА</div>
+        </div>
+
+        <ul class="menu-list stats-list">
+          <li class="stat-row"><span class="stat-label">ПЕРСОНАЖ</span><span class="stat-value">ВАСЯ ПЕТРОВ</span></li>
+          <li class="stat-row"><span class="stat-label">ОТКРЫТЫЙ РАЙОН</span><span class="stat-value">ЗАМОСКВОРЕЧЬЕ</span></li>
+          <li class="stat-row"><span class="stat-label">ВРЕМЯ В ИГРЕ</span><span class="stat-value">5 ч 40 мин</span></li>
+          <li class="stat-row"><span class="stat-label">ВЫПОЛНЕНО МИССИЙ</span><span class="stat-value">7 / 32</span></li>
+          <li class="stat-row"><span class="stat-label">УГНАНО МАШИН</span><span class="stat-value">42</span></li>
+          <li class="stat-row"><span class="stat-label">ПРОЕХАНО КИЛОМЕТРОВ</span><span class="stat-value">187,3</span></li>
+          <li class="stat-row"><span class="stat-label">МАКС. УРОВЕНЬ РОЗЫСКА</span><span class="stat-value">★ ★ ★</span></li>
+          <li class="stat-row"><span class="stat-label">НАЛИЧНЫЕ</span><span class="stat-value">$ 88 600</span></li>
+          <li class="stat-row"><span class="stat-label">ЛЮБИМАЯ РАДИОСТАНЦИЯ</span><span class="stat-value">RADIO ХАОС 102.4</span></li>
+          <li class="menu-item back" data-action="back">
+            <span class="item-arrow">◂</span><span class="item-label">НАЗАД</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ─────────── ПОДМЕНЮ: СВОДКА ─────────── -->
+    <section id="brief-menu" class="screen menu-screen">
+      <div class="menu-side-art"></div>
+      <div class="menu-content">
+        <div class="menu-header">
+          <div class="menu-breadcrumb">ГЛАВНОЕ МЕНЮ ▸ <span class="bc-current">СВОДКА</span></div>
+          <div class="menu-title">СВОДКА СОБЫТИЙ</div>
+        </div>
+
+        <div class="brief-list">
+          <article class="brief-card">
+            <header><span class="brief-time">23:14</span><span class="brief-place">ТВЕРСКАЯ</span></header>
+            <p>Звонил Серый. Сказал, что у него «работа» — встреча у круглосуточного на Пушке.</p>
+          </article>
+          <article class="brief-card">
+            <header><span class="brief-time">21:02</span><span class="brief-place">КУТУЗОВСКИЙ</span></header>
+            <p>Босс хочет видеть тебя в Москва-Сити. Не опаздывай. Машина у подъезда.</p>
+          </article>
+          <article class="brief-card">
+            <header><span class="brief-time">18:33</span><span class="brief-place">ВАРШАВКА</span></header>
+            <p>Менты сели на хвост у поста ДПС. Пришлось уходить дворами через Чертаново.</p>
+          </article>
+          <article class="brief-card">
+            <header><span class="brief-time">15:48</span><span class="brief-place">ЗАМОСКВОРЕЧЬЕ</span></header>
+            <p>Получил 14 200 рублей за доставку. Чёрный «жигуль» оставил у Третьяковки.</p>
+          </article>
+        </div>
+
+        <ul class="menu-list">
+          <li class="menu-item back" data-action="back">
+            <span class="item-arrow">◂</span><span class="item-label">НАЗАД</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ─────────── ПОДМЕНЮ: МУЛЬТИПЛЕЕР ─────────── -->
+    <section id="multiplayer-menu" class="screen menu-screen">
+      <div class="menu-side-art"></div>
+      <div class="menu-content">
+        <div class="menu-header">
+          <div class="menu-breadcrumb">ГЛАВНОЕ МЕНЮ ▸ <span class="bc-current">МУЛЬТИПЛЕЕР</span></div>
+          <div class="menu-title">МУЛЬТИПЛЕЕР</div>
+        </div>
+        <div class="empty-state">
+          <div class="empty-icon">⊘</div>
+          <div class="empty-title">ОФФЛАЙН</div>
+          <div class="empty-text">Серверы выйдут на связь после релиза.<br />Подожди до зимы.</div>
+        </div>
+        <ul class="menu-list">
+          <li class="menu-item back" data-action="back">
+            <span class="item-arrow">◂</span><span class="item-label">НАЗАД</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ─────────── ПОДМЕНЮ: ТИТРЫ ─────────── -->
+    <section id="credits-menu" class="screen menu-screen">
+      <div class="menu-side-art"></div>
+      <div class="menu-content">
+        <div class="menu-header">
+          <div class="menu-breadcrumb">ГЛАВНОЕ МЕНЮ ▸ <span class="bc-current">ТИТРЫ</span></div>
+          <div class="menu-title">ТИТРЫ</div>
+        </div>
+        <div class="credits">
+          <div class="credit-block">
+            <div class="credit-role">RAGE GAMES PRESENTS</div>
+            <div class="credit-name">MOSCOW III</div>
+          </div>
+          <div class="credit-block">
+            <div class="credit-role">ИДЕЯ И ДИЗАЙН</div>
+            <div class="credit-name">RUSFIC DIGITAL</div>
+          </div>
+          <div class="credit-block">
+            <div class="credit-role">КОД И ИНТЕРФЕЙС</div>
+            <div class="credit-name">PERPLEXITY COMPUTER</div>
+          </div>
+          <div class="credit-block">
+            <div class="credit-role">ВДОХНОВЛЕНО</div>
+            <div class="credit-name">DMA / ROCKSTAR — GTA III, 2001</div>
+          </div>
+          <div class="credit-block">
+            <div class="credit-role">МУЗЫКА (БУДЕТ)</div>
+            <div class="credit-name">RADIO ХАОС · ШАНСОН ФМ · НТРВ</div>
+          </div>
+        </div>
+        <ul class="menu-list">
+          <li class="menu-item back" data-action="back">
+            <span class="item-arrow">◂</span><span class="item-label">НАЗАД</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ─────────── ПОДМЕНЮ: КАРТА ─────────── -->
+    <section id="map-menu" class="screen map-screen">
+      <div id="map-canvas"></div>
+
+      <!-- Верхняя панель в стиле GTA -->
+      <div class="map-hud-top">
+        <div class="map-hud-left">
+          <div class="map-breadcrumb">MOSCOW III ▸ КАРТА</div>
+          <div class="map-title">ИСТРИНСКИЙ Р-Н · ПОКРОВСКОЕ</div>
+        </div>
+        <div class="map-hud-right">
+          <div class="map-coord">55°49′N · 36°59′E</div>
+          <div class="map-time" id="map-clock">--:--</div>
+        </div>
+      </div>
+
+      <!-- Компас -->
+      <div class="map-compass">
+        <div class="compass-ring">
+          <span class="compass-n">С</span>
+          <span class="compass-e">В</span>
+          <span class="compass-s">Ю</span>
+          <span class="compass-w">З</span>
+          <span class="compass-needle">▲</span>
+        </div>
+      </div>
+
+      <!-- Список локаций -->
+      <div class="map-legend" id="map-legend">
+        <div class="legend-title">ТОЧКИ ИНТЕРЕСА</div>
+        <ul class="legend-list">
+          <li data-loc="player"><span class="dot dot-player">●</span>ИГРОК</li>
+          <li data-loc="home"><span class="dot dot-home">⌂</span>ДОМ — ПОКРОВСКОЕ</li>
+          <li data-loc="riga"><span class="dot dot-mission">M</span>ВЫЕЗД НА НОВОРИЖСКОЕ Ш.</li>
+          <li data-loc="shotlandiya"><span class="dot dot-side">$</span>МАЛЕНЬКАЯ ШОТЛАНДИЯ</li>
+          <li data-loc="knyazhe"><span class="dot dot-side">$</span>КНЯЖЬЕ ОЗЕРО</li>
+          <li data-loc="golf"><span class="dot dot-special">★</span>ГОЛЬФ-КЛУБ</li>
+          <li data-loc="shop"><span class="dot dot-shop">P</span>ТЦ — ПАРКОВКА</li>
+        </ul>
+      </div>
+
+      <!-- Нижняя панель -->
+      <div class="map-hud-bottom">
+        <div class="map-hint"><kbd>Esc</kbd> НАЗАД</div>
+        <div class="map-hint"><kbd>+ −</kbd> МАСШТАБ</div>
+        <div class="map-hint">ПЕРЕТАСКИВАЙ КАРТУ</div>
+        <button class="menu-item back map-back" data-action="back">
+          <span class="item-arrow">◂</span><span class="item-label">В МЕНЮ</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ─────────── ПОДМЕНЮ: ВЫХОД ─────────── -->
+    <section id="quit-menu" class="screen menu-screen">
+      <div class="menu-side-art"></div>
+      <div class="menu-content quit-content">
+        <div class="menu-header">
+          <div class="menu-title">ВЫЙТИ ИЗ ИГРЫ?</div>
+          <div class="menu-sub">Несохранённый прогресс будет потерян.</div>
+        </div>
+
+        <ul class="menu-list quit-list">
+          <li class="menu-item" data-action="quit-yes">
+            <span class="item-arrow">▸</span><span class="item-label">ДА — ВЫЙТИ</span>
+          </li>
+          <li class="menu-item back" data-action="back">
+            <span class="item-arrow">◂</span><span class="item-label">НЕТ — ВЕРНУТЬСЯ</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ─────────── СТАРТ КАМПАНИИ (МОК) ─────────── -->
+    <section id="loading-screen" class="screen">
+      <div class="loading-bg"></div>
+      <div class="loading-overlay">
+        <div class="loading-title">ЗАГРУЗКА</div>
+        <div class="loading-mission" id="loading-mission">КАМПАНИЯ — БРАТ ВЕРНУЛСЯ</div>
+        <div class="loading-bar"><div class="loading-bar-fill" id="loading-bar-fill"></div></div>
+        <div class="loading-tip" id="loading-tip">Совет: на ручник лучше не тормозить в гололёд.</div>
+      </div>
+    </section>
+
+    <!-- ─────────── МОБИЛЬНАЯ ПОДСКАЗКА ─────────── -->
+    <div id="touch-hint" class="touch-hint hidden">КОСНИСЬ ЭКРАНА</div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="./script.js"></script>
+  </body>
+</html>
