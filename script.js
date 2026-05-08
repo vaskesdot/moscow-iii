@@ -69,6 +69,7 @@
     brief: 'brief-menu',
     multiplayer: 'multiplayer-menu',
     map: 'map-menu',
+    pano: 'pano-screen',
     credits: 'credits-menu',
     quit: 'quit-menu',
     loading: 'loading-screen',
@@ -97,6 +98,7 @@
 
   function back() {
     audio.back();
+    if (current === 'pano') exitPanorama();
     if (history.length > 0) {
       const prev = history.pop();
       show(prev);
@@ -238,18 +240,22 @@
   let mapInstance = null;
   let mapClockTimer = null;
 
-  // Координаты Покровского (сняты из видео пользователя)
-  const POKROVSKOE_CENTER = [55.81674, 36.99840];
+  // Координаты Покровского (сняты из видео пользователя, уточнены)
+  const POKROVSKOE_CENTER = [55.8090, 37.0118];
 
-  // Точки интереса вокруг Покровского
+  // Точки интереса — реальные места Истринского р-на
   const POI = {
-    player:      { coord: [55.81674, 36.99840], color: '#ffffff', symbol: '●', label: 'ИГРОК' },
-    home:        { coord: [55.81560, 37.00120], color: '#f08522', symbol: '⌂', label: 'ДОМ — ПОКРОВСКОЕ' },
-    riga:        { coord: [55.82550, 36.97000], color: '#ff5e3a', symbol: 'M', label: 'НОВОРИЖСКОЕ Ш.' },
-    shotlandiya: { coord: [55.81260, 37.01900], color: '#3aa3ff', symbol: '$', label: 'МАЛЕНЬКАЯ ШОТЛАНДИЯ' },
-    knyazhe:     { coord: [55.81100, 36.98200], color: '#3aa3ff', symbol: '$', label: 'КНЯЖЬЕ ОЗЕРО' },
-    golf:        { coord: [55.80450, 37.01400], color: '#d4a737', symbol: '★', label: 'ГОЛЬФ-КЛУБ' },
-    shop:        { coord: [55.82200, 37.02500], color: '#ededed', symbol: 'P', label: 'ТЦ — ПАРКОВКА' },
+    home:        { coord: [55.8090, 37.0118], color: '#f08522', symbol: '⌂', label: 'ПОКРОВСКОЕ — ДОМ',         desc: 'Деревня Покровское, г.о. Истра' },
+    krasniy:     { coord: [55.8123, 36.9988], color: '#ededed', symbol: '⌂', label: 'КРАСНЫЙ ПОСЕЛОК',     desc: 'Соседний посёлок' },
+    padikovo:    { coord: [55.8189, 36.9750], color: '#ededed', symbol: '⌂', label: 'ПАДИКОВО',                desc: 'Деревня Падиково' },
+    voronino:    { coord: [55.7980, 37.0250], color: '#ededed', symbol: '⌂', label: 'ВОРОНИНО',                  desc: 'Соседняя деревня' },
+    riga:        { coord: [55.8350, 36.9820], color: '#ff5e3a', symbol: 'M', label: 'НОВОРИЖСКОЕ Ш.',         desc: 'Выезд на Рижское шоссе' },
+    snegiri:     { coord: [55.8340, 37.0470], color: '#ff5e3a', symbol: 'M', label: 'СНЕГИРИ',                   desc: 'Посёлок Снегири' },
+    arhangelskoe:{ coord: [55.7867, 37.0732], color: '#3aa3ff', symbol: '$', label: 'АРХАНГЕЛЬСКОЕ',           desc: 'Усадьба Архангельское' },
+    nahabino:    { coord: [55.8450, 37.0830], color: '#3aa3ff', symbol: '$', label: 'НАХАБИНО',                  desc: 'Город Нахабино' },
+    istra:       { coord: [55.9070, 36.8580], color: '#d4a737', symbol: '★', label: 'ИСТРА',                       desc: 'Районный центр — г. Истра' },
+    dedovsk:     { coord: [55.8700, 37.1130], color: '#d4a737', symbol: '★', label: 'ДЕДОВСК',                   desc: 'Город Дедовск' },
+    nikoloy:     { coord: [55.8950, 36.7780], color: '#3aa3ff', symbol: '$', label: 'НОВО-ИЕРУСАЛИМСКИЙ', desc: 'Ново-Иерусалимский монастырь' },
   };
 
   function makePoiIcon(symbol, color) {
@@ -288,13 +294,13 @@
 
     mapInstance = L.map('map-canvas', {
       center: POKROVSKOE_CENTER,
-      zoom: 15,
-      minZoom: 12,
+      zoom: 13,
+      minZoom: 11,
       maxZoom: 18,
       zoomControl: true,
       attributionControl: false,
-      maxBounds: [[55.76, 36.86], [55.87, 37.13]],
-      maxBoundsViscosity: 0.85,
+      maxBounds: [[55.72, 36.65], [55.97, 37.25]],
+      maxBoundsViscosity: 0.7,
     });
 
     // Фотореалистичный спутник Esri World Imagery (бесплатный, без API ключа)
@@ -309,38 +315,48 @@
       { maxZoom: 19, opacity: 0.85, crossOrigin: true }
     ).addTo(mapInstance);
 
-    // Маркеры POI
+    // Маркеры POI — клик открывает popup с кнопкой «ПОГРУЗИТЬСЯ»
     Object.entries(POI).forEach(([key, p]) => {
       const marker = L.marker(p.coord, { icon: makePoiIcon(p.symbol, p.color) }).addTo(mapInstance);
-      marker.bindTooltip(p.label, {
-        permanent: false,
-        direction: 'top',
-        className: 'gta-poi-tooltip',
-      });
+      const popupHtml = `
+        <div class="poi-popup">
+          <div class="poi-popup-title">${p.label}</div>
+          <div class="poi-popup-desc">${p.desc || ''}</div>
+          <button class="poi-popup-btn" data-loc="${key}">вход ▸ ПОГРУЗИТЬСЯ</button>
+        </div>`;
+      marker.bindPopup(popupHtml, { closeButton: true, className: 'gta-popup' });
       marker.on('click', () => {
         audio.select();
-        mapInstance.flyTo(p.coord, 17, { duration: 0.7 });
+        mapInstance.flyTo(p.coord, Math.max(mapInstance.getZoom(), 15), { duration: 0.5 });
       });
     });
 
-    // Круг «радара» вокруг игрока
-    L.circle(POI.player.coord, {
-      radius: 350,
-      color: '#f08522',
-      weight: 1.5,
-      opacity: 0.7,
-      fillColor: '#f08522',
-      fillOpacity: 0.08,
-      dashArray: '4 6',
-    }).addTo(mapInstance);
+    // Обработчик кнопки в popup (делегированный)
+    mapInstance.on('popupopen', (e) => {
+      const btn = e.popup.getElement().querySelector('.poi-popup-btn');
+      if (btn && !btn.dataset.bound) {
+        btn.dataset.bound = '1';
+        btn.addEventListener('click', () => {
+          const k = btn.dataset.loc;
+          enterPanorama(k);
+        });
+      }
+    });
 
-    // Клики по списку локаций
+    // Клики по списку локаций — летим и открываем popup
     document.querySelectorAll('#map-legend .legend-list li').forEach((li) => {
       li.addEventListener('click', () => {
         const k = li.dataset.loc;
         if (POI[k]) {
           audio.select();
-          mapInstance.flyTo(POI[k].coord, 17, { duration: 0.7 });
+          mapInstance.flyTo(POI[k].coord, 16, { duration: 0.6 });
+          setTimeout(() => {
+            mapInstance.eachLayer((layer) => {
+              if (layer instanceof L.Marker && layer.getLatLng().lat === POI[k].coord[0]) {
+                layer.openPopup();
+              }
+            });
+          }, 700);
         }
       });
     });
@@ -375,6 +391,30 @@
 
     // Перерисовка после первого показа (Leaflet требует размеры контейнера)
     setTimeout(() => mapInstance.invalidateSize(), 80);
+  }
+
+  // ─────────────────────────────────────────────────────────────
+  // 360° ПАНОРАМА ЧЕРЕЗ YANDEX MAP-WIDGET
+  // ─────────────────────────────────────────────────────────────
+  function enterPanorama(key) {
+    const p = POI[key];
+    if (!p) return;
+    audio.start();
+    const [lat, lng] = p.coord;
+    // Yandex panorama embed — без ключа
+    const panoUrl = `https://yandex.ru/map-widget/v1/?ll=${lng},${lat}&panorama%5Bpoint%5D=${lng},${lat}&panorama%5Bdirection%5D=0,0&panorama%5Bspan%5D=120,60&z=18&l=stv,sta`;
+    const iframe = document.getElementById('pano-iframe');
+    if (iframe) iframe.src = panoUrl;
+    const titleEl = document.getElementById('pano-title');
+    const descEl = document.getElementById('pano-desc');
+    if (titleEl) titleEl.textContent = p.label;
+    if (descEl) descEl.textContent = p.desc || '';
+    navigate('pano');
+  }
+
+  function exitPanorama() {
+    const iframe = document.getElementById('pano-iframe');
+    if (iframe) iframe.src = 'about:blank';
   }
 
   // ────────────────────────────────────────────────────────────

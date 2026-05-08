@@ -107,20 +107,20 @@
         </div>
 
         <ul class="menu-list">
-          <li class="menu-item" data-action="start-1">
+          <li class="menu-item" data-target="map">
             <span class="item-arrow">▸</span>
-            <span class="item-label">КАМПАНИЯ — БРАТ ВЕРНУЛСЯ</span>
-            <span class="item-meta">8 миссий</span>
+            <span class="item-label">ВЫБРАТЬ СТАРТ НА КАРТЕ</span>
+            <span class="item-meta">Покровское + 10 мест</span>
           </li>
           <li class="menu-item" data-action="start-2">
             <span class="item-arrow">▸</span>
             <span class="item-label">КАМПАНИЯ — ХОЛОДНАЯ ЗИМА</span>
-            <span class="item-meta">12 миссий</span>
+            <span class="item-meta">12 миссий (скоро)</span>
           </li>
           <li class="menu-item" data-action="start-3">
             <span class="item-arrow">▸</span>
             <span class="item-label">СВОБОДНАЯ ЕЗДА</span>
-            <span class="item-meta">без миссий</span>
+            <span class="item-meta">без миссий (скоро)</span>
           </li>
           <li class="menu-item" data-action="start-4">
             <span class="item-arrow">▸</span>
@@ -387,14 +387,19 @@
           <div class="legend-title">ТОЧКИ ИНТЕРЕСА</div>
           <button class="legend-close" id="legend-close" aria-label="Свернуть">✕</button>
         </div>
+        <div class="legend-hint">Тап по точке → ПОГРУЗИТЬСЯ</div>
         <ul class="legend-list">
-          <li data-loc="player"><span class="dot dot-player">●</span>ИГРОК</li>
-          <li data-loc="home"><span class="dot dot-home">⌂</span>ДОМ — ПОКРОВСКОЕ</li>
-          <li data-loc="riga"><span class="dot dot-mission">M</span>ВЫЕЗД НА НОВОРИЖСКОЕ Ш.</li>
-          <li data-loc="shotlandiya"><span class="dot dot-side">$</span>МАЛЕНЬКАЯ ШОТЛАНДИЯ</li>
-          <li data-loc="knyazhe"><span class="dot dot-side">$</span>КНЯЖЬЕ ОЗЕРО</li>
-          <li data-loc="golf"><span class="dot dot-special">★</span>ГОЛЬФ-КЛУБ</li>
-          <li data-loc="shop"><span class="dot dot-shop">P</span>ТЦ — ПАРКОВКА</li>
+          <li data-loc="home"><span class="dot dot-home">⌂</span>ПОКРОВСКОЕ — ДОМ</li>
+          <li data-loc="krasniy"><span class="dot dot-shop">⌂</span>КРАСНЫЙ ПОСЕЛОК</li>
+          <li data-loc="padikovo"><span class="dot dot-shop">⌂</span>ПАДИКОВО</li>
+          <li data-loc="voronino"><span class="dot dot-shop">⌂</span>ВОРОНИНО</li>
+          <li data-loc="riga"><span class="dot dot-mission">M</span>НОВОРИЖСКОЕ Ш.</li>
+          <li data-loc="snegiri"><span class="dot dot-mission">M</span>СНЕГИРИ</li>
+          <li data-loc="arhangelskoe"><span class="dot dot-side">$</span>АРХАНГЕЛЬСКОЕ</li>
+          <li data-loc="nahabino"><span class="dot dot-side">$</span>НАХАБИНО</li>
+          <li data-loc="istra"><span class="dot dot-special">★</span>ИСТРА</li>
+          <li data-loc="dedovsk"><span class="dot dot-special">★</span>ДЕДОВСК</li>
+          <li data-loc="nikoloy"><span class="dot dot-side">$</span>НОВО-ИЕРУСАЛИМСКИЙ</li>
         </ul>
       </div>
 
@@ -406,6 +411,38 @@
         <button class="menu-item back map-back" data-action="back">
           <span class="item-arrow">◂</span><span class="item-label">В МЕНЮ</span>
         </button>
+      </div>
+    </section>
+
+    <!-- ─────────── 360° ПАНОРАМА ─────────── -->
+    <section id="pano-screen" class="screen pano-screen">
+      <div class="pano-frame-wrap">
+        <iframe id="pano-iframe"
+                src="about:blank"
+                frameborder="0"
+                allow="accelerometer; gyroscope; fullscreen"
+                allowfullscreen></iframe>
+      </div>
+
+      <div class="pano-hud-top">
+        <div class="pano-hud-left">
+          <div class="pano-breadcrumb">MOSCOW III ▸ ВЫБОР СТАРТА ▸ ПАНОРАМА</div>
+          <div class="pano-title" id="pano-title">ПОКРОВСКОЕ</div>
+          <div class="pano-desc" id="pano-desc">Осмотрись. Подвигай пальцем или мышью.</div>
+        </div>
+        <button class="pano-back menu-item" data-action="back" id="pano-back-btn">
+          <span class="item-arrow">◂</span><span class="item-label">НА КАРТУ</span>
+        </button>
+      </div>
+
+      <div class="pano-hud-bottom">
+        <div class="pano-hint">ТАЩИ МЫШЬЮ — ОГЛЯДЫВАЙСЯ</div>
+        <div class="pano-hint">НА ТЕЛЕФОНЕ — СВАЙПАЙ ПО ЭКРАНУ</div>
+      </div>
+
+      <!-- Прицел GTA поверх -->
+      <div class="pano-crosshair" aria-hidden="true">
+        <span></span><span></span><span></span><span></span>
       </div>
     </section>
 
