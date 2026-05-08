@@ -375,9 +375,18 @@
         </div>
       </div>
 
+      <!-- Кнопка открыть легенду (видна когда закрыта) -->
+      <button class="legend-toggle" id="legend-open" aria-label="Открыть список">
+        <span class="legend-toggle-icon">☰</span>
+        <span class="legend-toggle-label">ТОЧКИ</span>
+      </button>
+
       <!-- Список локаций -->
       <div class="map-legend" id="map-legend">
-        <div class="legend-title">ТОЧКИ ИНТЕРЕСА</div>
+        <div class="legend-header">
+          <div class="legend-title">ТОЧКИ ИНТЕРЕСА</div>
+          <button class="legend-close" id="legend-close" aria-label="Свернуть">✕</button>
+        </div>
         <ul class="legend-list">
           <li data-loc="player"><span class="dot dot-player">●</span>ИГРОК</li>
           <li data-loc="home"><span class="dot dot-home">⌂</span>ДОМ — ПОКРОВСКОЕ</li>

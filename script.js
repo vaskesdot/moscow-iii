@@ -345,6 +345,34 @@
       });
     });
 
+    // Сворачивание легенды
+    const mapScreen = document.getElementById('map-menu');
+    const closeBtn = document.getElementById('legend-close');
+    const openBtn = document.getElementById('legend-open');
+    const collapseLegend = () => {
+      mapScreen.classList.add('legend-collapsed');
+      audio.back();
+      setTimeout(() => mapInstance && mapInstance.invalidateSize(), 50);
+    };
+    const expandLegend = () => {
+      mapScreen.classList.remove('legend-collapsed');
+      audio.select();
+      setTimeout(() => mapInstance && mapInstance.invalidateSize(), 50);
+    };
+    if (closeBtn && !closeBtn.dataset.bound) {
+      closeBtn.dataset.bound = '1';
+      closeBtn.addEventListener('click', (e) => { e.stopPropagation(); collapseLegend(); });
+    }
+    if (openBtn && !openBtn.dataset.bound) {
+      openBtn.dataset.bound = '1';
+      openBtn.addEventListener('click', (e) => { e.stopPropagation(); expandLegend(); });
+    }
+
+    // На мобиле сворачиваем легенду по умолчанию
+    if (window.matchMedia('(max-width: 768px)').matches) {
+      mapScreen.classList.add('legend-collapsed');
+    }
+
     // Перерисовка после первого показа (Leaflet требует размеры контейнера)
     setTimeout(() => mapInstance.invalidateSize(), 80);
   }

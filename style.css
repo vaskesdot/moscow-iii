@@ -888,15 +888,64 @@ kbd {
   padding: 12px 14px 14px;
   font-family: 'Oswald', sans-serif;
 }
+.legend-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  border-bottom: 1px solid rgba(240,133,34,0.4);
+  padding-bottom: 6px;
+  margin-bottom: 8px;
+}
 .legend-title {
   font-family: 'Bebas Neue', sans-serif;
   font-size: 16px;
   letter-spacing: 0.18em;
   color: #f08522;
-  border-bottom: 1px solid rgba(240,133,34,0.4);
-  padding-bottom: 6px;
-  margin-bottom: 8px;
 }
+.legend-close {
+  background: transparent;
+  border: 1px solid rgba(240,133,34,0.5);
+  color: #f08522;
+  width: 26px;
+  height: 26px;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: background 0.15s, color 0.15s;
+}
+.legend-close:hover { background: #f08522; color: #000; }
+
+/* Кнопка открытия легенды (когда она свёрнута) */
+.legend-toggle {
+  position: absolute;
+  top: 92px;
+  left: 22px;
+  z-index: 600;
+  display: none;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: rgba(0,0,0,0.78);
+  border: 1px solid rgba(240,133,34,0.7);
+  color: #f08522;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 16px;
+  letter-spacing: 0.18em;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.legend-toggle:hover { background: #f08522; color: #000; }
+.legend-toggle-icon { font-size: 14px; }
+
+/* Состояния свёртывания */
+.map-screen.legend-collapsed .map-legend { display: none; }
+.map-screen.legend-collapsed .legend-toggle { display: inline-flex; }
 .legend-list { list-style: none; margin: 0; padding: 0; }
 .legend-list li {
   display: flex;
@@ -1040,6 +1089,7 @@ kbd {
     overflow-y: auto;
     max-width: none;
   }
+  .legend-toggle { top: 80px; left: 12px; padding: 6px 10px; font-size: 14px; }
   .map-compass { top: 80px; right: 12px; }
   .compass-ring { width: 60px; height: 60px; font-size: 12px; }
   .leaflet-control-zoom { margin-top: 150px !important; }
