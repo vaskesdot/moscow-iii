@@ -401,21 +401,23 @@
     const p = POI[key];
     if (!p) return;
     audio.start();
-    const [lat, lng] = p.coord;
-    // Yandex panorama embed — без ключа
-    const panoUrl = `https://yandex.ru/map-widget/v1/?ll=${lng},${lat}&panorama%5Bpoint%5D=${lng},${lat}&panorama%5Bdirection%5D=0,0&panorama%5Bspan%5D=120,60&z=18&l=stv,sta`;
-    const iframe = document.getElementById('pano-iframe');
-    if (iframe) iframe.src = panoUrl;
     const titleEl = document.getElementById('pano-title');
     const descEl = document.getElementById('pano-desc');
     if (titleEl) titleEl.textContent = p.label;
-    if (descEl) descEl.textContent = p.desc || '';
+    if (descEl) descEl.textContent = p.desc || 'Прогуляйся вокруг.';
     navigate('pano');
+    // Стартуем 3D-мир после отрисовки экрана
+    setTimeout(() => {
+      if (window.MoscowWorld && window.MoscowWorld.enterWorld) {
+        window.MoscowWorld.enterWorld(key, p.label);
+      }
+    }, 80);
   }
 
   function exitPanorama() {
-    const iframe = document.getElementById('pano-iframe');
-    if (iframe) iframe.src = 'about:blank';
+    if (window.MoscowWorld && window.MoscowWorld.exitWorld) {
+      window.MoscowWorld.exitWorld();
+    }
   }
 
   // ────────────────────────────────────────────────────────────
