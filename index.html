@@ -417,36 +417,30 @@
 
     <!-- ─────────── 3D-ПРОГУЛКА ─────────── -->
     <section id="pano-screen" class="screen pano-screen">
-      <canvas id="world-canvas"></canvas>
+      <!-- Yandex-панорама как фон -->
+      <div class="pano-frame-wrap">
+        <iframe id="pano-iframe" allow="fullscreen" loading="lazy"></iframe>
+      </div>
+
+      <!-- Затемнение при переходе между точками -->
+      <div class="pano-fade" id="pano-fade"></div>
 
       <div class="pano-hud-top">
         <div class="pano-hud-left">
-          <div class="pano-breadcrumb">MOSCOW III ▸ ВЫБОР СТАРТА ▸ ПРОГУЛКА</div>
+          <div class="pano-breadcrumb">MOSCOW III ▸ ПРОГУЛКА</div>
           <div class="pano-title" id="pano-title">ПОКРОВСКОЕ</div>
-          <div class="pano-desc" id="pano-desc">Стыковой режим. Выйди из машины.</div>
+          <div class="pano-desc" id="pano-desc">Двор у дома</div>
         </div>
         <button class="pano-back menu-item" data-action="back" id="pano-back-btn">
           <span class="item-arrow">◂</span><span class="item-label">НА КАРТУ</span>
         </button>
       </div>
 
-      <!-- HUD в стиле GTA -->
+      <!-- GTA-стрелки «куда пойти» — заполняются из waypoints.js -->
+      <div class="nav-arrows" id="nav-arrows"></div>
+
       <div class="world-hud-bottom">
-        <div class="world-hud-hint desktop-only">WASD — идти · МЫШЬ — обзор</div>
-        <div class="world-hud-hint mobile-only">Свайп — обзор · Кнопки — идти</div>
-      </div>
-
-      <!-- Мобильные кнопки движения -->
-      <div class="move-controls" id="move-controls">
-        <button class="move-btn move-fwd" id="btn-fwd" aria-label="Вперёд">▲</button>
-        <button class="move-btn move-bwd" id="btn-bwd" aria-label="Назад">▼</button>
-        <button class="move-btn move-left" id="btn-left" aria-label="Влево">◀</button>
-        <button class="move-btn move-right" id="btn-right" aria-label="Вправо">▶</button>
-      </div>
-
-      <!-- Прицел GTA поверх -->
-      <div class="pano-crosshair" aria-hidden="true">
-        <span></span><span></span><span></span><span></span>
+        <div class="world-hud-hint">Нажми на стрелку чтобы перейти к следующей точке</div>
       </div>
     </section>
 
@@ -485,14 +479,8 @@
     <div id="touch-hint" class="touch-hint hidden">КОСНИСЬ ЭКРАНА</div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script type="importmap">
-      {
-        "imports": {
-          "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
-        }
-      }
-    </script>
-    <script type="module" src="./world.js"></script>
+    <script src="./waypoints.js"></script>
+    <script src="./world.js"></script>
     <script src="./script.js"></script>
   </body>
 </html>
