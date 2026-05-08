@@ -256,6 +256,7 @@
     istra:       { coord: [55.9070, 36.8580], color: '#d4a737', symbol: '★', label: 'ИСТРА',                       desc: 'Районный центр — г. Истра' },
     dedovsk:     { coord: [55.8700, 37.1130], color: '#d4a737', symbol: '★', label: 'ДЕДОВСК',                   desc: 'Город Дедовск' },
     nikoloy:     { coord: [55.8950, 36.7780], color: '#3aa3ff', symbol: '$', label: 'НОВО-ИЕРУСАЛИМСКИЙ', desc: 'Ново-Иерусалимский монастырь' },
+    nevsky:      { coord: [55.8117, 37.0403], color: '#ffd24a', symbol: '✚', label: 'ЦЕРКОВЬ АЛ. НЕВСКОГО', desc: 'Храм Александра Невского — Княжье Озеро' },
   };
 
   function makePoiIcon(symbol, color) {
