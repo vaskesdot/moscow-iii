@@ -1508,3 +1508,355 @@ kbd {
   .nav-arrow-left   { left: 10px; }
   .nav-arrow-right  { right: 10px; }
 }
+
+/* ───────── NPC-АВАТАР (мультяшный, чисто CSS) ───────── */
+.npc-avatar {
+  position: relative;
+  border-radius: 50%;
+  background: var(--npc-skin);
+  box-shadow:
+    inset 0 -8% 12% rgba(0,0,0,0.25),
+    inset 0 6% 10% rgba(255,255,255,0.18),
+    0 2px 0 rgba(0,0,0,0.4);
+  overflow: hidden;
+  flex: none;
+}
+/* Волосы (шапка) */
+.npc-av-hair {
+  position: absolute;
+  top: 4%; left: 8%; right: 8%;
+  height: 38%;
+  background: var(--npc-hair);
+  border-radius: 50% 50% 36% 36% / 70% 70% 30% 30%;
+  box-shadow: inset 0 -4px 6px rgba(0,0,0,0.3);
+}
+/* Лицо просвечивает через skin цвет, добавим румянец */
+.npc-av-face {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 30% 70%, rgba(220,80,80,0.18), transparent 22%),
+              radial-gradient(circle at 70% 70%, rgba(220,80,80,0.18), transparent 22%);
+}
+/* Глаза */
+.npc-av-eye {
+  position: absolute;
+  top: 46%;
+  width: 14%;
+  height: 14%;
+  background: #1a1a1a;
+  border-radius: 50%;
+  box-shadow: inset -1px -1px 0 #000, 0 1px 0 rgba(255,255,255,0.4);
+}
+.npc-av-eye-l { left: 26%; }
+.npc-av-eye-r { right: 26%; }
+/* Бровь-усмешка - используем mouth */
+.npc-av-mouth {
+  position: absolute;
+  bottom: 24%;
+  left: 38%;
+  width: 24%;
+  height: 6%;
+  background: #6a2a14;
+  border-radius: 0 0 12px 12px / 0 0 12px 12px;
+  border-top: 2px solid #2a0a04;
+}
+/* Майка/кофта - снизу аватара */
+.npc-av-shirt {
+  position: absolute;
+  bottom: -2%;
+  left: -10%;
+  right: -10%;
+  height: 28%;
+  background: var(--npc-shirt);
+  border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+  box-shadow: inset 0 6px 10px rgba(0,0,0,0.25);
+}
+/* Воротник/цепь - акцент */
+.npc-av-collar {
+  position: absolute;
+  bottom: 4%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20%;
+  height: 6%;
+  background: var(--npc-accent);
+  border-radius: 50%;
+  box-shadow: 0 0 6px var(--npc-accent);
+}
+
+/* ───────── NPC-МАРКЕР НА КАРТЕ ───────── */
+.npc-icon {
+  background: transparent !important;
+  border: none !important;
+}
+.npc-pin {
+  position: relative;
+  width: 56px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.npc-pin-aura {
+  position: absolute;
+  top: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--npc-accent) 0%, transparent 65%);
+  opacity: 0.55;
+  animation: npc-aura-pulse 1.8s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes npc-aura-pulse {
+  0%, 100% { transform: translateX(-50%) scale(1);    opacity: 0.55; }
+  50%      { transform: translateX(-50%) scale(1.25); opacity: 0.18; }
+}
+.npc-pin .npc-avatar {
+  position: relative;
+  z-index: 2;
+  border: 2px solid var(--npc-accent);
+  box-shadow:
+    0 3px 0 rgba(0,0,0,0.55),
+    0 0 12px var(--npc-accent);
+}
+/* «!» восклицательный знак как у миссии-донора в GTA */
+.npc-pin-mark {
+  position: absolute;
+  top: -4px;
+  right: 2px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--npc-accent);
+  color: #1a0a02;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #1a0a02;
+  z-index: 3;
+  animation: npc-mark-bob 1.4s ease-in-out infinite;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.3);
+}
+@keyframes npc-mark-bob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-4px); }
+}
+
+/* ───────── МОДАЛКА ДИАЛОГА В СТИЛЕ GTA 3 ───────── */
+.npc-dialog {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  pointer-events: none;
+}
+.npc-dialog.hidden { display: none; }
+.npc-dialog-backdrop {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0.0) 50%, rgba(0,0,0,0.5) 100%);
+  pointer-events: auto;
+}
+.npc-dialog-box {
+  position: relative;
+  width: min(720px, 94vw);
+  margin: 0 0 24px;
+  background: linear-gradient(180deg, rgba(15,15,15,0.96) 0%, rgba(0,0,0,0.96) 100%);
+  border: 2px solid #f08522;
+  border-radius: 4px;
+  box-shadow:
+    0 0 0 1px rgba(255,210,74,0.2),
+    0 0 32px rgba(240,133,34,0.45),
+    0 12px 0 rgba(0,0,0,0.55);
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 14px;
+  padding: 14px 14px 16px;
+  color: #fff;
+  pointer-events: auto;
+  animation: npc-dialog-in 0.2s ease-out;
+}
+@keyframes npc-dialog-in {
+  from { transform: translateY(20px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+.npc-dialog-portrait {
+  width: 150px;
+  height: 150px;
+  border: 2px solid #f08522;
+  background: #1a1a1a
+    repeating-linear-gradient(45deg,
+      rgba(255,255,255,0.03) 0 4px,
+      transparent 4px 8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+.npc-dialog-portrait .npc-avatar {
+  border: 2px solid var(--npc-accent, #f08522);
+  box-shadow: 0 0 16px var(--npc-accent, #f08522);
+}
+.npc-dialog-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+.npc-dialog-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px;
+  letter-spacing: 0.14em;
+  color: #ffd24a;
+  text-shadow: 0 2px 0 #000, 0 0 8px rgba(255,210,74,0.3);
+  border-bottom: 1px solid rgba(240,133,34,0.4);
+  padding-bottom: 4px;
+}
+.npc-dialog-text {
+  font-family: 'Oswald', sans-serif;
+  font-size: 17px;
+  line-height: 1.45;
+  color: #f0f0f0;
+  min-height: 50px;
+  letter-spacing: 0.02em;
+}
+.npc-dialog-text-me {
+  color: rgba(255,210,74,0.7);
+  font-size: 13px;
+  letter-spacing: 0.18em;
+}
+.npc-dialog-choices {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 4px;
+}
+.npc-choice {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(240,133,34,0.4);
+  color: #fff;
+  padding: 9px 14px;
+  font-family: 'Oswald', sans-serif;
+  font-size: 14px;
+  letter-spacing: 0.06em;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.12s ease;
+  border-radius: 2px;
+}
+.npc-choice:hover,
+.npc-choice:active {
+  background: #f08522;
+  color: #000;
+  border-color: #ffd24a;
+  transform: translateX(2px);
+}
+.npc-choice-next {
+  align-self: flex-start;
+  background: rgba(240,133,34,0.18);
+}
+.npc-dialog-close {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  border: 1px solid rgba(240,133,34,0.4);
+  color: #f08522;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: 2px;
+}
+.npc-dialog-close:hover { background: #f08522; color: #000; }
+
+@media (max-width: 600px) {
+  .npc-dialog-box {
+    grid-template-columns: 92px 1fr;
+    width: calc(100vw - 16px);
+    margin-bottom: 12px;
+    gap: 10px;
+    padding: 10px 10px 12px;
+  }
+  .npc-dialog-portrait { width: 92px; height: 92px; }
+  .npc-dialog-portrait .npc-avatar { width: 80px !important; height: 80px !important; }
+  .npc-dialog-name { font-size: 16px; }
+  .npc-dialog-text { font-size: 14px; min-height: 40px; }
+  .npc-choice { font-size: 13px; padding: 8px 10px; }
+}
+
+/* ───────── МАРКЕР ЦЕЛИ МИССИИ (GO!) ───────── */
+.mission-target-icon {
+  background: transparent !important;
+  border: none !important;
+}
+.mission-target {
+  position: relative;
+  width: 180px;
+  height: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+}
+.mission-target-ring {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 3px solid var(--npc-accent);
+  box-shadow: 0 0 20px var(--npc-accent), inset 0 0 16px var(--npc-accent);
+  animation: mission-ring-pulse 1.4s ease-in-out infinite;
+}
+@keyframes mission-ring-pulse {
+  0%, 100% { transform: translateX(-50%) scale(1);   opacity: 1;   }
+  50%      { transform: translateX(-50%) scale(1.18); opacity: 0.5; }
+}
+.mission-target-dot {
+  position: absolute;
+  bottom: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--npc-accent);
+  color: #1a0a02;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 16px;
+  letter-spacing: 0.06em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #1a0a02;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.25);
+}
+.mission-target-label {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  background: rgba(0,0,0,0.85);
+  border: 1px solid var(--npc-accent);
+  color: var(--npc-accent);
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  padding: 3px 8px;
+  border-radius: 2px;
+  text-shadow: 0 1px 0 #000;
+}

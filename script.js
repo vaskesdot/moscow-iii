@@ -390,6 +390,11 @@
       mapScreen.classList.add('legend-collapsed');
     }
 
+    // NPC-пацаны на карте (диалоги-миссии)
+    if (window.MoscowNPC) {
+      window.MoscowNPC.attachToMap(L, mapInstance);
+    }
+
     // Перерисовка после первого показа (Leaflet требует размеры контейнера)
     setTimeout(() => mapInstance.invalidateSize(), 80);
   }
