@@ -1860,3 +1860,264 @@ kbd {
   border-radius: 2px;
   text-shadow: 0 1px 0 #000;
 }
+
+/* ───────── СЛОЙ АКТЁРОВ НА ПАНОРАМЕ (ГОТИКА 2 STYLE) ───────── */
+.pano-actors {
+  position: absolute;
+  inset: 0;
+  z-index: 720;
+  pointer-events: none;
+  overflow: hidden;
+}
+.actor {
+  position: absolute;
+  width: 90px;
+  height: 180px;
+  transform-origin: bottom center;
+  filter: drop-shadow(0 6px 0 rgba(0,0,0,0.45));
+  pointer-events: none;
+  animation: actor-walk 1.6s ease-in-out infinite;
+}
+.actor:nth-child(2) { animation-delay: -0.4s; }
+.actor:nth-child(3) { animation-delay: -0.9s; }
+@keyframes actor-walk {
+  0%, 100% { transform: translateX(-50%) translateY(0)    var(--actor-extra, ); }
+  50%      { transform: translateX(-50%) translateY(-3px) var(--actor-extra, ); }
+}
+
+.actor-body {
+  position: absolute;
+  inset: 0;
+}
+/* Голова */
+.ac-head {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 38px;
+  height: 42px;
+  background: var(--ac-skin);
+  border: 2px solid #1a0a02;
+  border-radius: 10px 10px 12px 12px;
+  box-shadow: inset -3px -3px 0 rgba(0,0,0,0.18);
+}
+.ac-hair {
+  position: absolute;
+  top: -4px;
+  left: -2px;
+  right: -2px;
+  height: 14px;
+  border: 2px solid #1a0a02;
+  border-radius: 10px 10px 4px 4px;
+}
+.ac-cap {
+  position: absolute;
+  top: -8px;
+  left: -4px;
+  right: -4px;
+  height: 12px;
+  border: 2px solid #1a0a02;
+  border-radius: 10px 10px 2px 2px;
+}
+.ac-cap-visor {
+  position: absolute;
+  top: 2px;
+  left: -8px;
+  width: 22px;
+  height: 5px;
+  background: #1a1a1a;
+  border: 2px solid #1a0a02;
+  border-radius: 0 0 6px 6px;
+}
+.ac-scarf {
+  position: absolute;
+  top: -2px;
+  left: -4px;
+  right: -4px;
+  height: 22px;
+  border: 2px solid #1a0a02;
+  border-radius: 18px 18px 4px 4px;
+}
+.ac-eye {
+  position: absolute;
+  top: 18px;
+  width: 4px;
+  height: 4px;
+  background: #1a0a02;
+  border-radius: 50%;
+}
+.ac-eye-l { left: 9px; }
+.ac-eye-r { right: 9px; }
+.ac-mouth {
+  position: absolute;
+  top: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 10px;
+  height: 3px;
+  background: #5a1a1a;
+  border-radius: 2px;
+}
+/* Торс */
+.ac-torso {
+  position: absolute;
+  top: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 56px;
+  height: 64px;
+  background: var(--ac-jacket);
+  border: 2px solid #1a0a02;
+  border-radius: 6px 6px 4px 4px;
+  box-shadow: inset -4px -4px 0 rgba(0,0,0,0.22), inset 4px 4px 0 rgba(255,255,255,0.08);
+}
+.ac-arm {
+  position: absolute;
+  top: 4px;
+  width: 14px;
+  height: 50px;
+  background: var(--ac-jacket);
+  border: 2px solid #1a0a02;
+  border-radius: 5px;
+  box-shadow: inset -2px -2px 0 rgba(0,0,0,0.22);
+  animation: actor-arm 1.6s ease-in-out infinite;
+}
+.ac-arm-l { left: -14px;  transform-origin: top center; }
+.ac-arm-r { right: -14px; transform-origin: top center; animation-delay: -0.8s; }
+@keyframes actor-arm {
+  0%, 100% { transform: rotate(8deg);  }
+  50%      { transform: rotate(-8deg); }
+}
+/* Лампасы для трико */
+.ac-stripe {
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 4px;
+  background: #fff;
+  opacity: 0.85;
+}
+.ac-stripe-l { left: 6px; }
+.ac-stripe-r { right: 6px; }
+.is-track .ac-arm::after {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0;
+  left: 50%;
+  width: 3px;
+  margin-left: -1.5px;
+  background: #fff;
+  opacity: 0.85;
+}
+/* Ноги */
+.ac-legs {
+  position: absolute;
+  top: 112px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 56px;
+  height: 56px;
+}
+.ac-leg {
+  position: absolute;
+  top: 0;
+  width: 22px;
+  height: 56px;
+  background: var(--ac-pants);
+  border: 2px solid #1a0a02;
+  border-radius: 4px 4px 6px 6px;
+  box-shadow: inset -3px -2px 0 rgba(0,0,0,0.3);
+  transform-origin: top center;
+  animation: actor-leg 1.6s ease-in-out infinite;
+}
+.ac-leg-l { left: 0;  }
+.ac-leg-r { right: 0; animation-delay: -0.8s; }
+@keyframes actor-leg {
+  0%, 100% { transform: rotate(-6deg); }
+  50%      { transform: rotate(6deg);  }
+}
+.is-track .ac-leg::after {
+  content: '';
+  position: absolute;
+  top: 4px;
+  bottom: 8px;
+  left: 50%;
+  width: 3px;
+  margin-left: -1.5px;
+  background: #fff;
+  opacity: 0.85;
+}
+/* Тень под ногами */
+.ac-shadow {
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 70px;
+  height: 10px;
+  background: radial-gradient(ellipse at center, rgba(0,0,0,0.55) 0%, transparent 70%);
+  border-radius: 50%;
+}
+
+/* ───────── ОБЛАЧКО-РЕПЛИКА (КОМИКС) ───────── */
+.actor-bubble {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-30%);
+  margin-bottom: 6px;
+  background: #fff;
+  color: #1a0a02;
+  border: 2px solid #1a0a02;
+  border-radius: 10px;
+  padding: 5px 9px 6px;
+  font-family: 'Oswald', sans-serif;
+  font-size: 12px;
+  line-height: 1.2;
+  white-space: nowrap;
+  box-shadow: 3px 3px 0 #1a0a02;
+  animation: bubble-float 3.2s ease-in-out infinite;
+}
+/* у перевёрнутых актёров (scaleX(-1)) текст оставляем читаемым */
+.actor[style*="scaleX(-1)"] .actor-bubble {
+  transform: translateX(-30%) scaleX(-1);
+}
+.actor-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 26px;
+  width: 12px;
+  height: 12px;
+  background: #fff;
+  border-right: 2px solid #1a0a02;
+  border-bottom: 2px solid #1a0a02;
+  transform: rotate(45deg);
+}
+.actor-bubble-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: #c83a14;
+  margin-bottom: 1px;
+}
+.actor-bubble-text { letter-spacing: 0.02em; }
+@keyframes bubble-float {
+  0%, 100% { transform: translateX(-30%) translateY(0);    }
+  50%      { transform: translateX(-30%) translateY(-3px); }
+}
+
+@media (max-width: 600px), (pointer: coarse) {
+  .actor { width: 70px; height: 140px; }
+  .ac-head { top: 6px; width: 30px; height: 34px; border-radius: 8px; }
+  .ac-eye { top: 14px; width: 3px; height: 3px; }
+  .ac-eye-l { left: 7px; } .ac-eye-r { right: 7px; }
+  .ac-mouth { top: 22px; width: 8px; height: 2px; }
+  .ac-torso { top: 40px; width: 44px; height: 50px; }
+  .ac-arm { width: 11px; height: 38px; top: 4px; }
+  .ac-arm-l { left: -11px; } .ac-arm-r { right: -11px; }
+  .ac-legs { top: 88px; width: 44px; height: 44px; }
+  .ac-leg { width: 17px; height: 44px; }
+  .actor-bubble { font-size: 11px; padding: 4px 7px; }
+  .actor-bubble-name { font-size: 10px; }
+}

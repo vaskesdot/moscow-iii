@@ -117,6 +117,7 @@
       titleEl.textContent = node.label;
       descEl.textContent = node.desc || '';
       renderArrows(node);
+      if (window.MoscowActors) window.MoscowActors.populate(nodeId);
 
       // Плавно убираем затемнение
       setTimeout(() => {
@@ -139,11 +140,13 @@
     titleEl.textContent = label || node.label;
     descEl.textContent = node.desc || '';
     renderArrows(node);
+    if (window.MoscowActors) window.MoscowActors.populate(startId);
   }
 
   function exitWorld() {
     iframe.src = 'about:blank';
     arrowsEl.innerHTML = '';
+    if (window.MoscowActors) window.MoscowActors.clear();
     currentNodeId = null;
   }
 
