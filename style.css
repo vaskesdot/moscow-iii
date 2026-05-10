@@ -1873,22 +1873,28 @@ kbd {
   position: absolute;
   width: 90px;
   height: 180px;
+  /* left/top/transform задаются из actors.js на каждый фрейм (yaw-tracking) */
   transform-origin: bottom center;
   filter: drop-shadow(0 6px 0 rgba(0,0,0,0.45));
   pointer-events: none;
-  animation: actor-walk 1.6s ease-in-out infinite;
+  will-change: transform, left, top;
+  transition: transform 60ms linear, left 60ms linear;
 }
-.actor:nth-child(2) { animation-delay: -0.4s; }
-.actor:nth-child(3) { animation-delay: -0.9s; }
-@keyframes actor-walk {
-  0%, 100% { transform: translateX(-50%) translateY(0)    var(--actor-extra, ); }
-  50%      { transform: translateX(-50%) translateY(-3px) var(--actor-extra, ); }
-}
-
 .actor-body {
   position: absolute;
   inset: 0;
+  animation: actor-breathe 1.6s ease-in-out infinite;
+  transform-origin: bottom center;
 }
+.actor:nth-child(2) .actor-body { animation-delay: -0.4s; }
+.actor:nth-child(3) .actor-body { animation-delay: -0.9s; }
+.actor:nth-child(4) .actor-body { animation-delay: -1.2s; }
+@keyframes actor-breathe {
+  0%, 100% { transform: translateY(0)    scaleY(1);    }
+  50%      { transform: translateY(-2px) scaleY(1.01); }
+}
+
+
 /* Голова */
 .ac-head {
   position: absolute;
