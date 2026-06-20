@@ -1,0 +1,19 @@
+{
+  "registry_version": "1.0.0",
+  "generated": "2026-06-20",
+  "hub": "genesis-l0-core",
+  "doctrine": "genesis-l0-core is the network HUB. Every service exposes the floating genesis_nav.js bottom bar so navigation is bidirectional: hub<->spoke and spoke<->spoke. Single source of truth = hub /api/registry; nav.js falls back to its embedded copy if the hub is unreachable.",
+  "services": [
+    { "id": "genesis-l0-core",            "name": "L0 Core (HUB)",        "url": "https://genesis-l0-core.onrender.com",            "health": "/health",      "role": "hub",   "repo": "vaskesdot/genesis-l0-core" },
+    { "id": "genesis-iphk",               "name": "IPHK",                 "url": "https://genesis-iphk.onrender.com",               "health": "/api/health",  "role": "spoke", "repo": "vaskesdot/genesis-iphk" },
+    { "id": "genesis-recordati-global",   "name": "Recordati Global",     "url": "https://genesis-recordati-global.onrender.com",   "health": "/api/health",  "role": "spoke", "repo": "vaskesdot/genesis-recordati-global" },
+    { "id": "genesis-r1",                 "name": "R1",                   "url": "https://genesis-r1.onrender.com",                 "health": "/api/health",  "role": "spoke", "repo": "vaskesdot/genesis-r1" },
+    { "id": "genesis-rusfic",             "name": "Rusfic",               "url": "https://genesis-rusfic.onrender.com",             "health": "/api/health",  "role": "spoke", "repo": "vaskesdot/genesis-rusfic" },
+    { "id": "genesis-intelligence-core",  "name": "Intelligence Core",    "url": "https://genesis-intelligence-core.onrender.com",  "health": "/",            "role": "spoke", "repo": "vaskesdot/genesis-intelligence-core" },
+    { "id": "pharma-tower",               "name": "Pharma Tower",         "url": "https://pharma-tower.onrender.com",               "health": "/health",      "role": "spoke", "repo": "vaskesdot/pharma-tower-genesis" },
+    { "id": "vkiv",                       "name": "VKIV",                 "url": "https://vkiv.onrender.com",                       "health": "/health",      "role": "spoke", "repo": "vaskesdot/vkiv" },
+    { "id": "moscow-iii",                 "name": "Moscow III",           "url": "https://moscow-iii.onrender.com",                 "health": "/api/health",  "role": "spoke", "repo": "vaskesdot/moscow-iii" },
+    { "id": "genesis-v2",                 "name": "Genesis V2",           "url": "https://genesis-v2-kijy.onrender.com",            "health": "/",            "role": "spoke", "repo": "vaskesdot/genesis-v2" },
+    { "id": "spyder",                     "name": "SPYDER",               "url": "https://spyder-7he7.onrender.com",                "health": "/",            "role": "spoke", "repo": "vaskesdot/SPYDER" }
+  ]
+}
